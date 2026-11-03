@@ -1,0 +1,12 @@
+[
+  {"question": "Someone called saying they were my grandson in jail and needed bail money. Is that a scam?", "expected_url_contains": ["family-emergency", "imposter", "pass-it-on"]},
+  {"question": "A caller says my Medicare card is suspended and asks for my number", "expected_url_contains": ["imposter", "impersonators", "phone-scams", "pass-it-on"]},
+  {"question": "A pop-up says my computer has a virus and to call Microsoft", "expected_url_contains": ["tech-support"]},
+  {"question": "They told me to pay with Target gift cards. What do I do now?", "expected_url_contains": ["gift-card", "what-do-if-you-were-scammed"]},
+  {"question": "I wired money to a scammer yesterday, how do I get it back?", "expected_url_contains": ["what-do-if-you-were-scammed"]},
+  {"question": "Someone I met on Facebook wants me to invest in crypto with guaranteed returns", "expected_url_contains": ["cryptocurrency", "investment", "romance"]},
+  {"question": "I got a letter saying I won a lottery but need to pay a fee first", "expected_url_contains": ["prize", "lottery", "sweepstakes"]},
+  {"question": "A text says my bank account is locked and has a link to verify", "expected_url_contains": ["phishing", "text-messages"]},
+  {"question": "My online boyfriend needs money for a plane ticket to visit me", "expected_url_contains": ["romance"]},
+  {"question": "How do I report a scam to the government?", "expected_url_contains": ["what-do-if-you-were-scammed", "how-avoid-scam", "elder-fraud"]}
+]
