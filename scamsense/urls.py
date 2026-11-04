@@ -6,6 +6,7 @@ from django.urls import include, path
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("ingestion/", include("ingestion.urls")),
+    path("", include("chat.urls")),
 ]
 
 if settings.DEBUG:

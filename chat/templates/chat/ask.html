@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Ask ScamSense</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 720px; margin: 40px auto; padding: 0 16px; color: #1a1a1a; }
+    form p { display: flex; flex-direction: column; gap: 4px; }
+    textarea, button { font-size: 16px; padding: 8px; font-family: inherit; }
+    button { width: fit-content; cursor: pointer; }
+    .msg { padding: 10px 12px; border-radius: 6px; margin-bottom: 8px; }
+    .info { background: #e8f0fe; }
+    .errorlist { color: #b3261e; }
+    .question { font-weight: 600; }
+    .passage { padding: 10px 0; border-bottom: 1px solid #ddd; white-space: pre-line; }
+  </style>
+</head>
+<body>
+  <h1>Ask ScamSense</h1>
+  <p>Describe a message, call or situation and ask whether it's a scam or what to do next.</p>
+
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Ask</button>
+  </form>
+
+  {% if hits is not None %}
+  <h2>Answer</h2>
+  <p class="question">{{ question }}</p>
+  {% for h in hits %}
+  <div class="passage">{{ h.text }}</div>
+  {% empty %}
+  <div class="msg info">No information found yet. The knowledge base may be empty.</div>
+  {% endfor %}
+  {% endif %}
+</body>
+</html>

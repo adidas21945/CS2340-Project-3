@@ -31,10 +31,23 @@ python manage.py smoke_retrieval   # check known questions find the right page
 
 The first ingest without an OpenAI key downloads a small local embedding model (about 80 MB).
 
+## Ask a question (story #2)
+
+```bash
+python manage.py runserver
+```
+
+Open http://localhost:8000/ and type a question.
+
+Right now, user story 2 is built, and people can ask questions, but it only returns the top three
+matching passages from the knowledge base because nothing calls an LLM yet.
+
+Story #3 swaps in an LLM answer in `chat/answer.py`.
+
 ## Tests
 
 ```bash
-python manage.py test ingestion
+python manage.py test ingestion chat
 ```
 
 Tests use an in-memory store, so they need no network, API key or model download.
