@@ -1,18 +1,25 @@
-<!doctype html>
+{% load chat_extras %}<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Ask ScamSense</title>
   <style>
-    body { font-family: system-ui, sans-serif; max-width: 720px; margin: 40px auto; padding: 0 16px; color: #1a1a1a; }
+    body { font-family: system-ui, sans-serif; max-width: 720px; margin: 40px auto; padding: 0 16px; color: #1a1a1a; font-size: 18px; }
     form p { display: flex; flex-direction: column; gap: 4px; }
-    textarea, button { font-size: 16px; padding: 8px; font-family: inherit; }
+    textarea, button { font-size: 18px; padding: 8px; font-family: inherit; }
     button { width: fit-content; cursor: pointer; }
     .msg { padding: 10px 12px; border-radius: 6px; margin-bottom: 8px; }
     .info { background: #e8f0fe; }
     .errorlist { color: #b3261e; }
     .question { font-weight: 600; }
-    .passage { padding: 10px 0; border-bottom: 1px solid #ddd; white-space: pre-line; }
+    .answer { white-space: pre-line; line-height: 1.55; }
+    .cite { text-decoration: none; font-size: 0.85em; }
+    .sources { padding-left: 24px; }
+    .sources li { margin-bottom: 14px; }
+    .meta { display: block; color: #555; font-size: 15px; }
+    details summary { cursor: pointer; color: #1a56db; font-size: 15px; margin-top: 4px; }
+    .passage { padding: 8px 0; white-space: pre-line; font-size: 16px; }
   </style>
 </head>
 <body>
@@ -25,14 +32,33 @@
     <button type="submit">Ask</button>
   </form>
 
-  {% if hits is not None %}
+  {% if answer %}
   <h2>Answer</h2>
   <p class="question">{{ question }}</p>
-  {% for h in hits %}
-  <div class="passage">{{ h.text }}</div>
-  {% empty %}
-  <div class="msg info">No information found yet. The knowledge base may be empty.</div>
-  {% endfor %}
+
+  {% if answer.mode == "llm" %}
+  <div class="answer">{{ answer.text|cite_links }}</div>
+  {% elif answer.mode == "extractive" %}
+  <div class="msg info">A written answer isn't available right now. Here is what the official guidance says.</div>
+  {% else %}
+  <div class="msg info">{{ answer.text }}</div>
+  {% endif %}
+
+  {% if answer.sources %}
+  <h3>Sources</h3>
+  <ol class="sources">
+    {% for s in answer.sources %}
+    <li id="src-{{ s.number }}">
+      {% if s.url %}<a href="{{ s.url }}" target="_blank" rel="noopener">{{ s.title }}</a>{% else %}{{ s.title }}{% endif %}
+      <span class="meta">{{ s.publisher|default:"Unknown publisher" }}{% if s.heading %} · {{ s.heading }}{% endif %}{% if s.published_date %} · {{ s.published_date }}{% endif %}</span>
+      <details{% if answer.mode == "extractive" %} open{% endif %}>
+        <summary>Show the passage used</summary>
+        <div class="passage">{{ s.excerpt }}</div>
+      </details>
+    </li>
+    {% endfor %}
+  </ol>
+  {% endif %}
   {% endif %}
 </body>
 </html>

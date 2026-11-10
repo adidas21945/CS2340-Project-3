@@ -1,4 +1,4 @@
-"""Story #2: end users ask questions in plain language."""
+"""Stories #2-#4: ask in plain language, get a grounded answer with its sources."""
 from django import forms
 from django.shortcuts import render
 
@@ -22,12 +22,17 @@ class QuestionForm(forms.Form):
 
 
 def ask(request):
-    question, hits = "", None
+    question, answer = "", None
     if request.method == "POST":
         form = QuestionForm(request.POST)
         if form.is_valid():
             question = form.cleaned_data["question"]
-            hits = answer_question(question)
+            answer = answer_question(question)
     else:
         form = QuestionForm()
-    return render(request, "chat/ask.html", {"form": form, "question": question, "hits": hits})
+    return render(request, "chat/ask.html", {
+        "form": form,
+        "question": question,
+        "answer": answer,
+        "hits": answer.hits if answer else None,
+    })

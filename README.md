@@ -7,6 +7,8 @@ CS 2340 Objects and Design, Project 3.
 
 ## Setup
 
+Requires Python 3.10 or newer (`python3 --version`). On a Mac with an older default, use `python3.12 -m venv .venv`.
+
 ```bash
 python -m venv .venv
 source .venv/bin/activate          # Windows: .venv\Scripts\activate
@@ -31,26 +33,50 @@ python manage.py smoke_retrieval   # check known questions find the right page
 
 The first ingest without an OpenAI key downloads a small local embedding model (about 80 MB).
 
-## Ask a question (story #2)
+## Ask a question (stories #2, #3, #4)
 
 ```bash
 python manage.py runserver
 ```
 
-Open http://localhost:8000/ and type a question.
+Open http://localhost:8000/ and type a question, or paste a suspicious message.
 
-Right now, user story 2 is built, and people can ask questions, but it only returns the top three
-matching passages from the knowledge base because nothing calls an LLM yet.
+- **Grounded answers (#3):** the top passages are retrieved, passages that are not relevant enough
+  are dropped (`RELEVANCE_MAX_DISTANCE`), and the LLM (`OPENAI_CHAT_MODEL`, default `gpt-4o-mini`)
+  answers from those numbered passages only. Every fact must cite a passage like `[1]`. Answers that
+  cite nothing are rejected, and the model replies "couldn't find this" when the passages don't cover
+  the question.
+- **Sources (#4):** only the passages the answer actually cites are listed, with a link, publisher,
+  section and date, plus a "Show the passage used" toggle. Each `[n]` in the answer links to its
+  source. PDF sources link to the uploaded file.
+- **No key or LLM error:** the page shows the matching passages and their sources instead.
 
-Story #3 swaps in an LLM answer in `chat/answer.py`.
+| File | What it does |
+|---|---|
+| `chat/answer.py` | Retrieve, filter, generate, check citations, build sources |
+| `chat/prompts.py` | System prompt and passage formatting (story #8 adds intent prompts here) |
+| `chat/llm.py` | OpenAI wrapper; every failure becomes `LLMError` |
+
+### Adding or removing the OpenAI key
+
+`OPENAI_API_KEY` in `.env` turns on LLM answers **and** switches embeddings from the local model to
+OpenAI's `text-embedding-3-small`. After adding or removing the key, rebuild the knowledge base:
+
+```bash
+python manage.py ingest --clear
+```
+
+`RELEVANCE_MAX_DISTANCE=0.70` was tuned for both embedding models: on-topic questions score about
+0.31-0.61 with OpenAI and 0.40-0.58 with the local model; off-topic ones mostly score 0.78+.
 
 ## Tests
 
 ```bash
-python manage.py test ingestion chat
+OPENAI_API_KEY= python manage.py test ingestion chat
 ```
 
-Tests use an in-memory store, so they need no network, API key or model download.
+Tests use an in-memory store. Blanking the key as above makes sure they never call the OpenAI API.
+On Windows, put a `#` in front of `OPENAI_API_KEY` in `.env` while running the tests instead.
 
 ## How ingestion works (stories #6 and #7)
 

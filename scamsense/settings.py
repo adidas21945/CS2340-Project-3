@@ -140,3 +140,10 @@ MEDIA_ROOT = BASE_DIR / "media"
 VECTOR_STORE_BACKEND = os.environ.get("VECTOR_STORE_BACKEND", "chroma")  # "chroma" or "memory"
 CHROMA_DIR = BASE_DIR / "chroma_db"
 VECTOR_COLLECTION = "scamsense"
+
+# Answer generation (stories #3, #4). See chat/answer.py.
+LLM_MODEL = os.environ.get("OPENAI_CHAT_MODEL", "gpt-4o-mini")
+LLM_TIMEOUT_SECONDS = 30
+# Passages with a cosine distance above this are treated as not relevant.
+# Tuned per embedding model; re-check it with smoke_retrieval if you switch models.
+RELEVANCE_MAX_DISTANCE = float(os.environ.get("RELEVANCE_MAX_DISTANCE", "0.70"))
