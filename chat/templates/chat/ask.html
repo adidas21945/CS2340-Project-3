@@ -13,6 +13,7 @@
     .info { background: #e8f0fe; }
     .errorlist { color: #b3261e; }
     .question { font-weight: 600; }
+    .intent { color: #555; font-size: 15px; margin-top: -8px; }
     .answer { white-space: pre-line; line-height: 1.55; }
     .cite { text-decoration: none; font-size: 0.85em; }
     .sources { padding-left: 24px; }
@@ -35,6 +36,7 @@
   {% if answer %}
   <h2>Answer</h2>
   <p class="question">{{ question }}</p>
+  {% if answer.intent != "general" %}<p class="intent">Answering as: {{ answer.intent.label }}</p>{% endif %}
 
   {% if answer.mode == "llm" %}
   <div class="answer">{{ answer.text|cite_links }}</div>
